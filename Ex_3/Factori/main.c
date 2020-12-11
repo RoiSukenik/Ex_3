@@ -13,8 +13,5 @@
 
 int main(int argc, char* argv[])
 {
-	node *list = divid_number_add_2_list(315);
-	print_list(list);
-	free_list(list);
-	return 0;
+
 }
