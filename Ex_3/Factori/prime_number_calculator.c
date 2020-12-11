@@ -1,38 +1,40 @@
 #include "prime_number_calculator.h"
 
-node* initialize_prime_num_list()
+node* initialize_prime_num_list(void)
 {
-	node* p_prime_num_arr = NULL;
-	p_prime_num_arr = (node*)malloc(sizeof(node));
-	if (NULL == p_prime_num_arr)
+	node* p_prime_num_list = NULL;
+	p_prime_num_list = (node*)malloc(sizeof(node));
+	if (NULL == p_prime_num_list)
 	{
-		printf_s("Failed to allocate memory");
+		printf_s("Failed to allocate memory\n\n");
 		exit(STATUS_CODE_FAILURE);
 	}
-	return p_prime_num_arr;
+	p_prime_num_list->next = NULL;
+	return p_prime_num_list;
 }
 
-node* add_prime(node* prime_num_arr , int num)
+node* add_prime(node* p_prime_num_list , int num)
 {
-	int value = 0;
+	int value = num;
 	node* new_node = NULL;
-	while (num > 0)
+	if (num > 0)
 	{
 		new_node = (node*)malloc(sizeof(node));
 		if (NULL == new_node) {
-			printf_s("Failed to allocate memory");
+			printf_s("Failed to allocate memory\n\n");
 			exit(STATUS_CODE_FAILURE);
 		}
 		new_node->data = value;
-		new_node->next = prime_num_arr;
+		new_node->next = p_prime_num_list;
+		p_prime_num_list = new_node;
 	}
-	return new_node;
+	return p_prime_num_list;
 }
 
 node* divid_number_add_2_list(int num)
 {
 	node* p_prime_list = initialize_prime_num_list();
-	while (num % 2 > 0)
+	while (num % 2 == 0)
 	{
 		p_prime_list = add_prime(p_prime_list ,2);
 		num = num / 2;
@@ -51,11 +53,14 @@ node* divid_number_add_2_list(int num)
 }
 void free_list(node* p_prime_list)
 {
-	node* temp;
-	while (p_prime_list != NULL)
+	node* temp ;
+	while (p_prime_list->next != NULL)
 	{
 		temp = p_prime_list;
 		p_prime_list = p_prime_list->next;
 		free(temp);
 	}
+	free(p_prime_list);
+	printf_s("All Memory Allocations Freed!\n\n");
+	return STATUS_CODE_SUCCESS;
 }

@@ -9,9 +9,9 @@
 #define STATUS_CODE_SUCCESS 0
 
 
-typedef struct node {
+typedef struct _node {
 	int data;
-	node* next;
+	struct _node* next;
 }node;
 
 /*
@@ -19,7 +19,7 @@ typedef struct node {
 * Parameters - None
 * Returns - Pointer to a array struct
 */
-int* initialize_prime_num_list();
+node* initialize_prime_num_list(void);
 
 /*
 * Description - realloc in prime num arr, add prime number, update pointer
