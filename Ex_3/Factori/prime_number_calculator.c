@@ -58,6 +58,7 @@ void free_list(node* p_prime_list)
 	{
 		temp = p_prime_list;
 		p_prime_list = p_prime_list->next;
+		
 		free(temp);
 	}
 	free(p_prime_list);
