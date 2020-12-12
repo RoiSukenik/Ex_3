@@ -58,7 +58,7 @@ void free_list(node* p_prime_list)
 	{
 		temp = p_prime_list;
 		p_prime_list = p_prime_list->next;
-		
+		printf_s("%d\n", temp->data);
 		free(temp);
 	}
 	free(p_prime_list);

@@ -13,7 +13,7 @@
 
 int main(int argc, char* argv[])
 {
-	node* list = divid_number_add_2_list(315);
+	node* list = divid_number_add_2_list(430);
 	
 	
 	free_list(list);
