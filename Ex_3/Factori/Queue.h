@@ -4,7 +4,7 @@
 //#include	<stdbool.h>
 //#include	<string.h>
 //
-//typedef struct Queue
+//typedef struct _Queue
 //{
 //	int place_in_queue;
 //	int value;
