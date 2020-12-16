@@ -18,8 +18,8 @@ typedef struct q_node q_node;
 struct Queue
 {
     int count;
-    q_node* front;
-    q_node* rear;
+    q_node* first;
+    q_node* last;
 };
 typedef struct Queue Queue;
 
