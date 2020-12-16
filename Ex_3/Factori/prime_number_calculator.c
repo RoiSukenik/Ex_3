@@ -68,7 +68,7 @@ char* print_prime_list(node* p_prime_list) {
 	
 	while (p_prime_list->next->next != NULL)
 	{
-		int size_p_string = strlen(p_output_string);
+		int size_p_string = strlen(p_output_string);//FIXME change the 10
 		if (sprintf_s(p_output_string, size_p_string+10+sizeof(int), "%s%d, ",p_output_string, p_prime_list->data) == STATUS_CODE_FAILURE)
 		{
 			printf_s("Failed to Write Formatted Data to String \n\n");
