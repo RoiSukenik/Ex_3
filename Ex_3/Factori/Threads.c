@@ -151,7 +151,3 @@ DWORD WINAPI Main_of_Sub_Thread(LPVOID lpParam)
 	return STATUS_CODE_SUCCESS;
 }
 
-void start_parallel_secure_compute(char* input_path, int amount_of_threads)
-{
-
-}

@@ -52,5 +52,5 @@ int preform_task(HANDLE task_file_handle,
 	int task_start_index,
 	int task_end_index);
 
-void start_parallel_secure_compute(char* input_path, int amount_of_threads);
+
 #endif // !THREADS_DOT_H
