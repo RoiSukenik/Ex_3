@@ -4,12 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #define STATUS_CODE_FAILURE 1
 #define STATUS_CODE_SUCCESS 0
-
+#define STRING_OUTPUT_BUFFER 29
+#define STRING_OUTPUT_NUMBER_BUFFER 5
 
 typedef struct _node {
+	int original_num;
 	int data;
 	struct _node* next;
 }node;
@@ -19,7 +22,7 @@ typedef struct _node {
 * Parameters - None
 * Returns - Pointer to a array struct
 */
-node* initialize_prime_num_list(void);
+node* initialize_prime_num_list(int num);
 
 /*
 * Description - realloc in prime num arr, add prime number, update pointer
@@ -34,6 +37,13 @@ node* add_prime(node* prime_num_arr , int num);
 * Returns - Pointer to the updated number list
 */
 node* divid_number_add_2_list(int num);
+
+/*
+* Description - print prime number list
+* Parameters - Pointer to number list
+* Returns - pointer to string
+*/
+char* print_prime_list(node* p_prime_list);
 
 
 /*

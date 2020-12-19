@@ -1,6 +1,6 @@
 #include "prime_number_calculator.h"
 
-node* initialize_prime_num_list(void)
+node* initialize_prime_num_list(int num)
 {
 	node* p_prime_num_list = NULL;
 	p_prime_num_list = (node*)malloc(sizeof(node));
@@ -9,6 +9,7 @@ node* initialize_prime_num_list(void)
 		printf_s("Failed to allocate memory\n\n");
 		exit(STATUS_CODE_FAILURE);
 	}
+	p_prime_num_list->original_num = num;
 	p_prime_num_list->next = NULL;
 	return p_prime_num_list;
 }
@@ -25,6 +26,7 @@ node* add_prime(node* p_prime_num_list , int num)
 			exit(STATUS_CODE_FAILURE);
 		}
 		new_node->data = value;
+		new_node->original_num = p_prime_num_list->original_num;
 		new_node->next = p_prime_num_list;
 		p_prime_num_list = new_node;
 	}
@@ -33,7 +35,7 @@ node* add_prime(node* p_prime_num_list , int num)
 
 node* divid_number_add_2_list(int num)
 {
-	node* p_prime_list = initialize_prime_num_list();
+	node* p_prime_list = initialize_prime_num_list(num);
 	while (num % 2 == 0)
 	{
 		p_prime_list = add_prime(p_prime_list ,2);
@@ -51,6 +53,40 @@ node* divid_number_add_2_list(int num)
 
 	return p_prime_list;
 }
+char* print_prime_list(node* p_prime_list) {
+	char* p_output_string=NULL;
+	p_output_string = (char*)malloc(sizeof(char));
+	if (NULL == p_output_string) {
+		printf_s("Failed to allocate memory\n\n");
+		exit(STATUS_CODE_FAILURE);
+	}
+	if (sprintf_s(p_output_string, sizeof(int)+STRING_OUTPUT_BUFFER, "The Prime Factor of %d are: ", p_prime_list->original_num) == STATUS_CODE_FAILURE)
+	{
+			printf_s("Failed to Write Formatted Data to String \n\n");
+			exit(STATUS_CODE_FAILURE);
+	}
+	
+	while (p_prime_list->next->next != NULL)
+	{
+		int size_p_string = strlen(p_output_string);
+		if (sprintf_s(p_output_string, size_p_string+10+sizeof(int), "%s%d, ",p_output_string, p_prime_list->data) == STATUS_CODE_FAILURE)
+		{
+			printf_s("Failed to Write Formatted Data to String \n\n");
+			exit(STATUS_CODE_FAILURE);
+		}
+		
+		p_prime_list = p_prime_list->next;
+	}
+	int size_p_string = strlen(p_output_string);
+	if (sprintf_s(p_output_string, size_p_string + 10 + sizeof(int), "%s%d\r\n ", p_output_string, p_prime_list->data) == STATUS_CODE_FAILURE)
+	{
+		printf_s("Failed to Write Formatted Data to String \n\n");
+		exit(STATUS_CODE_FAILURE);
+	}
+	
+	return p_output_string;
+
+}
 void free_list(node* p_prime_list)
 {
 	node* temp ;
@@ -63,5 +99,4 @@ void free_list(node* p_prime_list)
 	}
 	free(p_prime_list);
 	printf_s("All Memory Allocations Freed!\n\n");
-	return STATUS_CODE_SUCCESS;
 }

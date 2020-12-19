@@ -14,8 +14,7 @@
 int main(int argc, char* argv[])
 {
 	node* list = divid_number_add_2_list(430);
-	
-	
+	print_prime_list(list);
 	free_list(list);
 	return STATUS_CODE_SUCCESS;
 }
