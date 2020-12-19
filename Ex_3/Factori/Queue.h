@@ -42,7 +42,7 @@ int Top(Queue* que);
 * Parameters - Pointer to a Queue type object
 * Returns - int of the poped item, poped node is freed , next elemnt is now top of queue
 */
-int Pop(Queue* que);
+void Pop(Queue* que);
 
 /*
 * Description - Push an element to the end of the queue

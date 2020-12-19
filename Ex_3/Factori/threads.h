@@ -15,7 +15,7 @@
 #define MIN_THREAD_NUMBER_ALLOWED 1
 #define OUTPUT_FILE_NAME "output.txt"
 
-static HANDLE semaphore_handle;
+
 
 /* this struct help us pass parameters to the threads*/
 typedef struct _thread_parameters {
@@ -23,7 +23,6 @@ typedef struct _thread_parameters {
 	char* output_file_path;
 	int		task_start_index;
 	int		task_end_index;
-	int		security_key;
 
 }thread_parameters;
 

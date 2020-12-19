@@ -8,7 +8,14 @@
 #include "threads.h"
 
 
+
 int main(int argc, char* argv[]);
+/*
+* Description - Used To Create a Simple Thread
+* Parameters - Start Routine, Thread Parameters, Thread ID
+* Returns - HANDLE to thread
+*/
+
 
 #endif // !MAIN_DOT_H
 

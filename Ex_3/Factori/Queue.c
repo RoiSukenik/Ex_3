@@ -41,7 +41,7 @@ int Push(Queue* que, int value)
     que->count++;
 }
 
-int Pop(Queue* que)
+void Pop(Queue* que)
 {
     q_node* tmp_node;
     int value = que->first->data;
@@ -49,7 +49,6 @@ int Pop(Queue* que)
     que->first = que->first->next;
     que->count--;
     free(tmp_node);
-    return(value);
 }
 int Top(Queue* que) {
     return(que->first->data);
@@ -57,7 +56,7 @@ int Top(Queue* que) {
 Queue* DestroyQueue(Queue* que) 
 {
     q_node* temp_node;
-    while (!Empty(que)) { int tmp_value = Pop(que); }
+    while (!Empty(que)) { Pop(que); }
         free(que);
         return STATUS_CODE_SUCCESS;
 }
