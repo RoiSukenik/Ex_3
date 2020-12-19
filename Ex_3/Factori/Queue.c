@@ -6,21 +6,26 @@ Queue* InitializeQueue(void)
     que = (Queue*)malloc(sizeof(Queue));
     if (que == NULL) {
         printf("The pointer was not allocated correctly");
-        exit(STATUS_CODE_FAILURE);
+        return NULL;
     }
     que->count = 0;
     que->first = NULL;
     que->last = NULL;
+    return *que;
 }
 
 bool Empty(Queue* que) {
     return (que->count == 0);
 }
 
-void Push(Queue* que, int value) 
+int Push(Queue* que, int value) 
 {
     q_node* tmp_node;
     tmp_node = (q_node*)malloc(sizeof(q_node));
+    if (tmp_node == NULL) {
+        printf("The pointer was not allocated correctly");
+        return STATUS_CODE_FAILURE;
+    }
     tmp_node->data = value;
     tmp_node->next = NULL;
     if (!Empty(que))
