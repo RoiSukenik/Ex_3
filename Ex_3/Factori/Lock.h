@@ -2,24 +2,9 @@
 #define LOCK_H_FILE
 #define STATUS_CODE_FAILURE 1
 #define STATUS_CODE_SUCCESS 0
-#include <stdio.h>
-#include <stdbool.h>
-#include <windows.h>
-#include <string.h>
-#include <math.h>
-#include <stdlib.h>
-
-#define WAIT_TWO_MINUTES 120000
-
-static const int semaphore_starting_value = 0;
-static const int semaphore_max_value = 1;
-
 
 typedef struct _Lock {
-	int readers;
-	HANDLE semaphore_roomEmpty;
-	HANDLE Mutex;
-/// HANDLE turnstile;
+
 }Lock;
 
 /*
