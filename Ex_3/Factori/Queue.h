@@ -8,20 +8,20 @@ static const int STATUS_CODE_FAILURE = -1;
 
 
 // inspired by codesdope blog
-struct q_node
+typedef struct _q_node
 {
 	int data;
 	struct q_node* next;
-};
-typedef struct q_node q_node;
+}q_node;
 
-struct Queue
+
+typedef struct _Queue
 {
     int count;
     q_node* first;
     q_node* last;
-};
-typedef struct Queue Queue;
+}Queue;
+
 
 /*
 * Description - Initialize Queue, Based on Queue File
