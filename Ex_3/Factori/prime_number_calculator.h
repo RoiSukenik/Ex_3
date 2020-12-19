@@ -1,12 +1,9 @@
 #ifndef PRIME_NUMBER_CALCULATOR_DOT_H
 #define PRIME_NUMBER_CALCULATOR_DOT_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
+#include "includes.h"
 
-#define STATUS_CODE_FAILURE 1
+#define STATUS_CODE_FAILURE -1
 #define STATUS_CODE_SUCCESS 0
 #define STRING_OUTPUT_BUFFER 29
 #define STRING_OUTPUT_NUMBER_BUFFER 5

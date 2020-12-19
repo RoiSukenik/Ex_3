@@ -1,10 +1,10 @@
 #ifndef		QUEUE_DOT_H
 #define		QUEUE_DOT_H
 
-#include	<stdbool.h>
-#include	<string.h>
-static const int STATUS_CODE_SUCCESS = 0;
-static const int STATUS_CODE_FAILURE = -1;
+#include "includes.h"
+
+#define STATUS_CODE_FAILURE -1
+#define STATUS_CODE_SUCCESS 0
 
 
 // inspired by codesdope blog
