@@ -4,7 +4,7 @@
 Lock* InitializeLock(void)
 {
 	Lock* lock = (Lock*)malloc(sizeof(Lock));
-    lock->reads = 0;
+    lock->readers = 0;
 
     // semaphore creation:
     lock->semaphore_roomEmpty = CreateSemaphore(
@@ -15,7 +15,7 @@ Lock* InitializeLock(void)
     if (lock->semaphore_roomEmpty == NULL)
     { 
         printf("CreateSemaphore error: %d\n", GetLastError());
-        return STATUS_CODE_FAILURE
+        return STATUS_CODE_FAILURE;
     }
 
     // mutex creation:
@@ -43,7 +43,7 @@ Lock* InitializeLock(void)
     //}
     // //turnstile
 
-	return Locker
+    return lock;
 }
 
 
@@ -75,8 +75,8 @@ int lock_read(Lock* lock) {
     if (wait_code != WAIT_OBJECT_0) {
         return STATUS_CODE_FAILURE;
     }
-    lock->reads += 1;
-    if (readers == 1) {
+    lock->readers += 1;
+    if (lock->readers == 1) {
         // wait on semaphore (wait for writer to finish)
         wait_code = WaitForSingleObject(
             lock->semaphore_roomEmpty,  // handle to semaphore
@@ -104,8 +104,8 @@ int read_release(Lock* lock) {
         return STATUS_CODE_FAILURE;
     }
 
-    lock->reads -= 1;
-    if (readers == 0) {
+    lock->readers -= 1;
+    if (lock->readers == 0) {
         // last reader release
         if (!ReleaseSemaphore(
             lock->semaphore_roomEmpty,  // handle to semaphore
@@ -164,5 +164,5 @@ int write_release(Lock* lock) {
 }
 
 void DestroyLock(Lock* lock) {
-    free (lock)
+    free(lock);
 }

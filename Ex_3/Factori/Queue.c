@@ -11,7 +11,7 @@ Queue* InitializeQueue(void)
     que->count = 0;
     que->first = NULL;
     que->last = NULL;
-    return *que;
+    return que;
 }
 
 bool Empty(Queue* que) {
