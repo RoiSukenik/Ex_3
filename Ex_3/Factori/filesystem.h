@@ -2,9 +2,10 @@
 #ifndef FILE_SYSTEM_DOT_H
 #define FILE_SYSTEM_DOT_H
 
-#include <stdio.h>
+#include "includes.h"
+#include "Queue.h"
 
-#define STATUS_CODE_FAILURE 1
+#define STATUS_CODE_FAILURE -1
 #define STATUS_CODE_SUCCESS 0
 
 /*
@@ -35,4 +36,6 @@ int amount_of_lines(FILE* p_fs);
 */
 Queue* extract_priorty_array(char* input_path_priorty);
 
+
+void clean_output_file(char* output_file);
 #endif // !FILE_SYSTEM_DOT_H

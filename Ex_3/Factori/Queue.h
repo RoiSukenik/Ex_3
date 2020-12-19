@@ -1,27 +1,27 @@
 #ifndef		QUEUE_DOT_H
 #define		QUEUE_DOT_H
 
-#include	<stdbool.h>
-#include	<string.h>
-static const int STATUS_CODE_SUCCESS = 0;
-static const int STATUS_CODE_FAILURE = -1;
+#include "includes.h"
+
+#define STATUS_CODE_FAILURE -1
+#define STATUS_CODE_SUCCESS 0
 
 
 // inspired by codesdope blog
-struct q_node
+typedef struct _q_node
 {
 	int data;
 	struct q_node* next;
-};
-typedef struct q_node q_node;
+}q_node;
 
-struct Queue
+
+typedef struct _Queue
 {
     int count;
     q_node* first;
     q_node* last;
-};
-typedef struct Queue Queue;
+}Queue;
+
 
 /*
 * Description - Initialize Queue, Based on Queue File

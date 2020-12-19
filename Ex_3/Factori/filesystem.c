@@ -16,6 +16,15 @@ void close_file(FILE* p_file_stream)
 	errno_t retval = fclose(p_file_stream);
 	if (retval != 0) { printf("Failed to close file");	exit(retval); }
 }
+void clean_output_file(char* output_file)
+{
+	FILE* p_stream;
+	// Open file
+	// Open file in write mode, this mode overwrites/creates this empty file
+
+	p_stream = open_file(output_file);
+	close_file(p_stream);
+}
 int amount_of_lines(FILE* p_fs) {
 	int amount_of_lines = 0;
 	char c = NULL;

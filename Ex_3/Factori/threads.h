@@ -1,16 +1,19 @@
 #ifndef THREADS_DOT_H
 #define THREAD_DOT_H
 
-#include <windows.h>
 
+#include "includes.h"
+#include "prime_number_calculator.h"
+#include "filesystem.h"
 
-#define STATUS_CODE_FAILURE 1
+#define STATUS_CODE_FAILURE -1
 #define STATUS_CODE_SUCCESS 0
 #define MAX_INT 2147483647
 #define WAIT_THREE_SECONDS 3000
 #define WAIT_ONE_SECOND 1000
 #define MAX_THREAD_NUMBER_ALLOWED 64
 #define MIN_THREAD_NUMBER_ALLOWED 1
+#define OUTPUT_FILE_NAME "output.txt"
 
 static HANDLE semaphore_handle;
 
@@ -43,4 +46,11 @@ static HANDLE CreateThreadSimple
 */
 DWORD WINAPI Main_of_Sub_Thread(LPVOID lpParam);
 
+
+int preform_task(HANDLE task_file_handle,
+	HANDLE output_file_handle,
+	int task_start_index,
+	int task_end_index);
+
+void start_parallel_secure_compute(char* input_path, int amount_of_threads);
 #endif // !THREADS_DOT_H

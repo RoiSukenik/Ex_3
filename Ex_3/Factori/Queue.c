@@ -4,13 +4,15 @@ Queue* InitializeQueue(void)
 {
     Queue* que = NULL;
     que = (Queue*)malloc(sizeof(Queue));
-    if (que == NULL) {
-        printf("The pointer was not allocated correctly");
+    if (NULL == que) 
+    {
+        printf_s("Failed to allocate memory\n\n");
         exit(STATUS_CODE_FAILURE);
     }
     que->count = 0;
     que->first = NULL;
     que->last = NULL;
+    return que;
 }
 
 bool Empty(Queue* que) {
@@ -19,8 +21,13 @@ bool Empty(Queue* que) {
 
 void Push(Queue* que, int value) 
 {
-    q_node* tmp_node;
+    q_node* tmp_node = NULL;
     tmp_node = (q_node*)malloc(sizeof(q_node));
+    if (NULL == tmp_node)
+    {
+        printf_s("Failed to allocate memory\n\n");
+        exit(STATUS_CODE_FAILURE);
+    }
     tmp_node->data = value;
     tmp_node->next = NULL;
     if (!Empty(que))
@@ -51,7 +58,7 @@ int Top(Queue* que) {
 }
 Queue* DestroyQueue(Queue* que) 
 {
-    q_node* temp_node;
+    q_node* temp_node = NULL;
     while (!Empty(que)) { int tmp_value = Pop(que); }
         free(que);
         return STATUS_CODE_SUCCESS;
