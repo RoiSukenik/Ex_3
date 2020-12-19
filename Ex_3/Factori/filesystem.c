@@ -56,6 +56,6 @@ Queue* extract_priorty_array(char* input_path_priorty)
 	}
 	close_file(p_fs_prior);
 
-	return p_priorty_array;
+	return queue;
 }
 
