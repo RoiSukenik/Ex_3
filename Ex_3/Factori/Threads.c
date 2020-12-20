@@ -37,9 +37,12 @@ int preform_task(HANDLE task_file_handle,
 		free(tasked_string);
 		return STATUS_CODE_FAILURE;
 	}
+	
 	char* ptr;
 	char* nexttoken;
-	char* token = strtok_s(setfile_returned_value, "\n", &nexttoken);
+	char* delim = "\r\n";
+	char* token = strtok_s(tasked_string, delim, &nexttoken);
+	//free(p_num);
 	int num;
 	num = (int)strtol(token, &ptr, 10);
 	token = NULL;
@@ -109,14 +112,9 @@ DWORD WINAPI Main_of_Sub_Thread(LPVOID lpParam)
 	HANDLE output_file_handle = NULL;
 	int return_value;
 
-	task_file_handle = CreateFileA(
-		parameters_of_the_thread->input_file_path,
-		GENERIC_READ,
-		FILE_SHARE_READ,
-		NULL,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL);
+	printf("Thread reached\n");//Delete me
+
+	task_file_handle = CreateFileA(parameters_of_the_thread->input_file_path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (task_file_handle == INVALID_HANDLE_VALUE) {
 		char* error = NULL;
 		sprintf_s(error, "%lu",sizeof(long), GetLastError);
@@ -198,25 +196,28 @@ HANDLE* create_initilize_thanlde_array(char* task_file_path,Queue* queue,int amo
 		thread_parameters* tp = create_initilize_tp_array(task_file_path, queue, amount_of_tasks);
 		DWORD* thread_id_array = create_thread_id_array(tp, amount_of_tasks);
 		int i = 0;
-		while(amount_of_threads > 0)
+		while(amount_of_tasks > 0)
 		{
-			*(array_of_handles_to_threads + i) = NULL;
-			*(array_of_handles_to_threads + i) = CreateThreadSimple(Main_of_Sub_Thread, tp+i, thread_id_array+i);
-			if (NULL == *(array_of_handles_to_threads + i))
+			for(int i= 0;i<amount_of_threads;i++)\
 			{
-				printf("Couldn't create thread, freeing previously created threads and memory allocations, bye.\n");
-				// CloseHandles
-				for (int j = 0; j < i; j++) { CloseHandle(*(array_of_handles_to_threads + j)); }
-				// Free pointers
-				free(array_of_handles_to_threads); free(thread_id_array);free(tp);
-				exit(STATUS_CODE_FAILURE);
+				*(array_of_handles_to_threads + i) = NULL;
+				*(array_of_handles_to_threads + i) = CreateThreadSimple(Main_of_Sub_Thread, tp + i, thread_id_array + i);
+				if (NULL == *(array_of_handles_to_threads + i))
+				{
+					printf("Couldn't create thread, freeing previously created threads and memory allocations, bye.\n");
+					// CloseHandles
+					for (int j = 0; j < i; j++) { CloseHandle(*(array_of_handles_to_threads + j)); }
+					// Free pointers
+					free(array_of_handles_to_threads); free(thread_id_array); free(tp);
+					exit(STATUS_CODE_FAILURE);
+				}
 			}
 			DWORD wait_code;
 			wait_code = WaitForMultipleObjects
 			(amount_of_threads,
 				array_of_handles_to_threads,
 				TRUE,
-				WAIT_THREE_SECONDS); //FIXME check with finite time
+				INFINITE); //FIXME check with finite time
 			if (wait_code != WAIT_OBJECT_0)
 			{				// handling the failure 
 				if (wait_code == WAIT_TIMEOUT) { printf("threads wait failed (Handle timeout), closing everything !\n"); }
@@ -241,5 +242,18 @@ HANDLE* create_initilize_thanlde_array(char* task_file_path,Queue* queue,int amo
 	}
 }
 	
+void free_list(node* p_prime_list)
+{
+	node* temp;
+	
+	while (p_prime_list != NULL)
+	{
+		temp = p_prime_list;
+		p_prime_list = p_prime_list->next;
+		free(temp);
+	}
+
+	printf_s("All Memory Allocations Freed!\n\n");
+}
 
 

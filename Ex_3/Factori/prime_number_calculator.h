@@ -8,6 +8,9 @@
 #define STRING_OUTPUT_BUFFER 29
 #define STRING_OUTPUT_NUMBER_BUFFER 5
 
+
+#define size_of_buffer  10
+
 typedef struct _node {
 	int original_num;
 	int data;
@@ -43,12 +46,7 @@ node* divid_number_add_2_list(int num);
 char* print_prime_list(node* p_prime_list);
 
 
-/*
-* Description - Free prime number list
-* Parameters - Pointer to number list
-* Returns - set list pointer to null
-*/
-void free_list(node* p_prime_list);
+
 
 
 

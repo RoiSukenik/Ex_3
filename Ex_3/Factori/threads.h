@@ -14,7 +14,7 @@
 #define WAIT_ONE_SECOND 1000
 #define MAX_THREAD_NUMBER_ALLOWED 64
 #define MIN_THREAD_NUMBER_ALLOWED 1
-#define MAX_NUMBER_LENGTH 9
+#define MAX_NUMBER_LENGTH 44
 #define OUTPUT_FILE_NAME "output.txt"
 
 
@@ -77,6 +77,11 @@ DWORD* create_thread_id_array(thread_parameters* tp, int amount_of_threads);
 */
 HANDLE* create_initilize_thanlde_array(char* task_file_path, Queue* queue, int amount_of_threads, int amount_of_tasks);
 
-
+/*
+* Description - Free prime number list
+* Parameters - Pointer to number list
+* Returns - set list pointer to null
+*/
+void free_list(node* p_prime_list);
 
 #endif // !THREADS_DOT_H

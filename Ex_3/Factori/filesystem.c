@@ -50,7 +50,6 @@ Queue* extract_priorty_array(char* input_path_priorty, int amount_of_tasks)
 		
 		
 		fgets(line,MAX_NUMBER_LENGTH,p_stream);
-		rsize_t strmax = sizeof line;
 		p_line = strtok_s(line, delim, &left_token);
 		
 		int num;
