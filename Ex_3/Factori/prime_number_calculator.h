@@ -47,7 +47,12 @@ char* print_prime_list(node* p_prime_list);
 
 
 
-
+/*
+* Description - Free prime number list
+* Parameters - Pointer to number list
+* Returns - set list pointer to null
+*/
+void free_list(node* p_prime_list);
 
 
 #endif // !PRIME_NUMBER_CALCULATOR_DOT_H

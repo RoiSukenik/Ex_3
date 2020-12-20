@@ -29,7 +29,7 @@ Lock* InitializeLock(void);
 * Parameters - Pointer to Lock struct
 * Returns - FAILURE or SUCCESS
 */
-int lock_read(Lock *lock);
+int read_lock(Lock *lock);
 
 /*
 * Description - release lock

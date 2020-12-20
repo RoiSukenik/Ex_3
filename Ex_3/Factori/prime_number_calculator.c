@@ -115,3 +115,16 @@ char* print_prime_list(node* p_prime_list) {
 
 }
 
+void free_list(node* p_prime_list)
+{
+	node* temp;
+
+	while (!p_prime_list->next != NULL)
+	{
+		temp = p_prime_list;
+		p_prime_list = p_prime_list->next;
+		free(temp);
+	}
+
+	printf_s("All Memory Allocations Freed!\n\n");
+}

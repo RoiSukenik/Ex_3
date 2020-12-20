@@ -3,7 +3,12 @@
 
 Lock* InitializeLock(void)
 {
-	Lock* lock = (Lock*)malloc(sizeof(Lock));
+    Lock* lock = NULL;
+	lock = (Lock*)malloc(sizeof(Lock));
+    if (lock == NULL) {
+        printf("Failed to allocate memory for lock object\n");
+        return NULL;
+    }
     lock->readers = 0;
 
     // semaphore creation:
@@ -15,7 +20,7 @@ Lock* InitializeLock(void)
     if (lock->semaphore_roomEmpty == NULL)
     { 
         printf("CreateSemaphore error: %d\n", GetLastError());
-        return STATUS_CODE_FAILURE;
+        return NULL;
     }
 
     // mutex creation:
@@ -27,7 +32,7 @@ Lock* InitializeLock(void)
     if (lock->Mutex == NULL)
     {
         printf("CreateMutex error: %d\n", GetLastError());
-        return STATUS_CODE_FAILURE;
+        return NULL;
     }
 
     //// mutex creation:
@@ -48,7 +53,7 @@ Lock* InitializeLock(void)
 
 
 
-int lock_read(Lock* lock) {
+int read_lock(Lock* lock) {
     DWORD wait_code;
 
     ////turnstile:
@@ -70,8 +75,8 @@ int lock_read(Lock* lock) {
 
 
     wait_code = WaitForSingleObject(
-        lock->Mutex,    // handle to mutex
-        WAIT_TWO_MINUTES);  // no time-out interval
+        lock->Mutex,        // handle to mutex
+        WAIT_TWO_MINUTES);  // time-out interval
     if (wait_code != WAIT_OBJECT_0) {
         return STATUS_CODE_FAILURE;
     }
@@ -98,8 +103,8 @@ int lock_read(Lock* lock) {
 int read_release(Lock* lock) {
     DWORD wait_code;
     wait_code = WaitForSingleObject(
-        lock->Mutex,    // handle to mutex
-        WAIT_TWO_MINUTES);  // no time-out interval
+        lock->Mutex,        // handle to mutex
+        WAIT_TWO_MINUTES);  // time-out interval
     if (wait_code != WAIT_OBJECT_0) {
         return STATUS_CODE_FAILURE;
     }

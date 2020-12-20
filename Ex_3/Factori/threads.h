@@ -6,6 +6,7 @@
 #include "prime_number_calculator.h"
 #include "filesystem.h"
 #include "Queue.h"
+#include "Lock.h"
 
 #define STATUS_CODE_FAILURE -1
 #define STATUS_CODE_SUCCESS 0
@@ -17,15 +18,15 @@
 #define MAX_NUMBER_LENGTH 44
 #define OUTPUT_FILE_NAME "output.txt"
 
+static HANDLE Mutex_que;
 
 
 
 /* this struct help us pass parameters to the threads*/
 typedef struct _thread_parameters {
-	char* input_file_path;
-	char* output_file_path;
-	int		task_start_index;
-	int		task_end_index;
+	char* file_path;
+	Queue* que;
+	Lock* lock;
 
 }thread_parameters;
 
@@ -75,13 +76,8 @@ DWORD* create_thread_id_array(thread_parameters* tp, int amount_of_threads);
 * Parameters - pointer to task file path, queue pointer, amount of threads,amount of tasks
 * Returns -pointer to array of thread handles
 */
-HANDLE* create_initilize_thanlde_array(char* task_file_path, Queue* queue, int amount_of_threads, int amount_of_tasks);
+void create_initilize_thandle_array(char* task_file_path, Queue* queue, int amount_of_threads, int amount_of_tasks);
 
-/*
-* Description - Free prime number list
-* Parameters - Pointer to number list
-* Returns - set list pointer to null
-*/
-void free_list(node* p_prime_list);
+
 
 #endif // !THREADS_DOT_H

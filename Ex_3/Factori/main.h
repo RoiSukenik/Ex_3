@@ -8,7 +8,6 @@
 #include "threads.h"
 #include "includes.h"
 
-
 int main(int argc, char* argv[]);
 /*
 * Description - Used To Create a Simple Thread
