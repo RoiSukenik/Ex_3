@@ -2,12 +2,7 @@
 #define LOCK_H_FILE
 #define STATUS_CODE_FAILURE 1
 #define STATUS_CODE_SUCCESS 0
-#include <stdio.h>
-#include <stdbool.h>
-#include <windows.h>
-#include <string.h>
-#include <math.h>
-#include <stdlib.h>
+#include "includes.h"
 
 #define WAIT_TWO_MINUTES 120000
 

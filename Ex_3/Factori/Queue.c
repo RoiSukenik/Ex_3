@@ -20,7 +20,7 @@ bool Empty(Queue* que) {
 
 int Push(Queue* que, int value) 
 {
-    q_node* tmp_node;
+    q_node* tmp_node =NULL;
     tmp_node = (q_node*)malloc(sizeof(q_node));
     if (tmp_node == NULL) {
         printf("The pointer was not allocated correctly");

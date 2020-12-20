@@ -1,28 +1,18 @@
 #include "filesystem.h"
 
 
-FILE* open_file(char* file_path)
-{
-	errno_t retval;
-	FILE* p_fs = NULL;
-	retval = fopen_s(p_fs, file_path, 'r+');
-	if (retval != 0) { printf("Failed to open file"); exit(retval); }
-	return p_fs;
-}
 
-void close_file(FILE* p_file_stream)
-{
-	errno_t retval = fclose(p_file_stream);
-	if (retval != 0) { printf("Failed to close file");	exit(retval); }
-}
 void clean_output_file(char* output_file)
 {
+	errno_t retval;
 	FILE* p_stream;
-	// Open file
 	// Open file in write mode, this mode overwrites/creates this empty file
-
-	p_stream = open_file(output_file);
-	close_file(p_stream);
+	retval = fopen_s(&p_stream, output_file, "w");
+	if (0 != retval) 
+	{ printf("Failed to open file.\n");	exit(retval); }
+	retval = fclose(p_stream);
+	if (0 != retval)
+	{ printf("Failed to close file.\n");	exit(retval); }
 }
 int amount_of_lines(FILE* p_fs) {
 	int amount_of_lines = 0;
@@ -42,28 +32,34 @@ int amount_of_lines(FILE* p_fs) {
 	}
 	return amount_of_lines;
 }
-Queue* extract_priorty_array(char* input_path_priorty)
+Queue* extract_priorty_array(char* input_path_priorty, int amount_of_tasks)
 {
 	Queue* queue = InitializeQueue();
-	FILE* p_fs_prior = open_file(input_path_priorty);
-	char* c = NULL , p_line = NULL;
-	int* p_priorty_array = NULL;
-	int amount_of_lines_file = amount_of_lines(p_fs_prior);
-	for (int i = 0; i < amount_of_lines_file; i++)
+	errno_t retval;
+	FILE* p_stream;
+
+	char line [MAX_NUMBER_LENGTH];
+	char* p_line = NULL;
+	char* left_token = NULL;
+	char* ptr ;
+	retval = fopen_s(&p_stream, input_path_priorty, "r");
+	char* delim = "\n";
+	if (0 != retval) { printf("Failed to open file.\n");	exit(STATUS_CODE_FAILURE); }
+	for (int i = 0; i < amount_of_tasks; i++)
 	{
-		while (c != '\r')
-		{
-			c = fgetc(p_fs_prior);
-			sprintf_s(p_line, sizeof(char), "%c", c);
-		}
-		c = fgetc(p_fs_prior); //Leap over the \n
-		char* ptr;
+		
+		
+		fgets(line,MAX_NUMBER_LENGTH,p_stream);
+		rsize_t strmax = sizeof line;
+		p_line = strtok_s(line, delim, &left_token);
+		
 		int num;
 		num = strtol(p_line, &ptr, 10);
 		Push(queue, num);
+		
+		
 	}
-	close_file(p_fs_prior);
-
+	fclose(p_stream);
 	return queue;
 }
 

@@ -9,4 +9,5 @@
 #include <windows.h>
 #include <crtdbg.h>
 #include <fileapi.h>
+
 #endif // !INCLUDES_DOT_H

@@ -1,6 +1,7 @@
 #include "threads.h"
 
 
+
 int preform_task(HANDLE task_file_handle,
 	HANDLE output_file_handle,
 	int task_start_index,
@@ -37,8 +38,11 @@ int preform_task(HANDLE task_file_handle,
 		return STATUS_CODE_FAILURE;
 	}
 	char* ptr;
+	char* nexttoken;
+	char* token = strtok_s(setfile_returned_value, "\n", &nexttoken);
 	int num;
-	num = (int)strtol(setfile_returned_value, &ptr, 10);
+	num = (int)strtol(token, &ptr, 10);
+	token = NULL;
 	node* primes = divid_number_add_2_list(num);
 	tasked_string = print_prime_list(primes);
 	free_list(primes);
@@ -150,4 +154,92 @@ DWORD WINAPI Main_of_Sub_Thread(LPVOID lpParam)
 	}
 	return STATUS_CODE_SUCCESS;
 }
+
+
+thread_parameters* create_initilize_tp_array(char* task_file_path, Queue* que, int amount_of_threads)
+{
+	thread_parameters* array_of_thread_parameters = (thread_parameters*)malloc(amount_of_threads * sizeof(thread_parameters));
+	if (array_of_thread_parameters == NULL) {
+		printf("The pointer was not allocated correctly");
+		exit(STATUS_CODE_FAILURE);
+	}
+	for (int i = 0; i < amount_of_threads; i++)
+	{
+		(array_of_thread_parameters + i)->input_file_path = task_file_path;
+		(array_of_thread_parameters + i)->output_file_path = "output.txt";
+		(array_of_thread_parameters + i)->task_start_index = Top(que);
+		(array_of_thread_parameters + i)->task_end_index = Top(que) + MAX_NUMBER_LENGTH;//FIXME MAGIC NUMBER
+		Pop(que);
+		
+	}
+	return array_of_thread_parameters;
+}
+
+DWORD* create_thread_id_array(thread_parameters* tp, int amount_of_threads)
+{
+	DWORD* array_of_thread_ids = (DWORD*)malloc(amount_of_threads * sizeof(DWORD));
+	if (array_of_thread_ids == NULL) {
+		printf("The pointer was not allocated correctly");
+		free(tp);
+		exit(STATUS_CODE_FAILURE);
+	}
+	return array_of_thread_ids;
+}
+HANDLE* create_initilize_thanlde_array(char* task_file_path,Queue* queue,int amount_of_threads,int amount_of_tasks)
+{	
+	
+	HANDLE* array_of_handles_to_threads = (HANDLE*)malloc(amount_of_threads * sizeof(HANDLE));
+	if (array_of_handles_to_threads == NULL) {
+		printf("The pointer was not allocated correctly");
+		exit(STATUS_CODE_FAILURE);
+	}
+	while(amount_of_tasks > 0)
+	{
+		thread_parameters* tp = create_initilize_tp_array(task_file_path, queue, amount_of_tasks);
+		DWORD* thread_id_array = create_thread_id_array(tp, amount_of_tasks);
+		int i = 0;
+		while(amount_of_threads > 0)
+		{
+			*(array_of_handles_to_threads + i) = NULL;
+			*(array_of_handles_to_threads + i) = CreateThreadSimple(Main_of_Sub_Thread, tp+i, thread_id_array+i);
+			if (NULL == *(array_of_handles_to_threads + i))
+			{
+				printf("Couldn't create thread, freeing previously created threads and memory allocations, bye.\n");
+				// CloseHandles
+				for (int j = 0; j < i; j++) { CloseHandle(*(array_of_handles_to_threads + j)); }
+				// Free pointers
+				free(array_of_handles_to_threads); free(thread_id_array);free(tp);
+				exit(STATUS_CODE_FAILURE);
+			}
+			DWORD wait_code;
+			wait_code = WaitForMultipleObjects
+			(amount_of_threads,
+				array_of_handles_to_threads,
+				TRUE,
+				WAIT_THREE_SECONDS); //FIXME check with finite time
+			if (wait_code != WAIT_OBJECT_0)
+			{				// handling the failure 
+				if (wait_code == WAIT_TIMEOUT) { printf("threads wait failed (Handle timeout), closing everything !\n"); }
+				else { printf("threads wait failed (Handle failure), closing everything !\n"); }
+				// CloseHandles
+				for (int i = 0; i < amount_of_threads; i++) { CloseHandle(*(array_of_handles_to_threads + i)); }
+				// Free pointers
+				free(array_of_handles_to_threads); free(thread_id_array); free(tp);
+				exit(STATUS_CODE_FAILURE);
+			}
+			amount_of_tasks = amount_of_tasks - amount_of_threads;
+			
+		}
+		
+
+		// CloseHandles
+		for (int i = 0; i < amount_of_threads; i++) { CloseHandle(*(array_of_handles_to_threads + i)); }
+		// Free pointers
+		free(array_of_handles_to_threads);
+		free(thread_id_array);
+		free(tp);
+	}
+}
+	
+
 

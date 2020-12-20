@@ -144,13 +144,16 @@
     <ClCompile Include="prime_number_calculator.c" />
     <ClCompile Include="Queue.c" />
     <ClCompile Include="Threads.c" />
+    <ClCompile Include="filesystem.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes.h" />
     <ClInclude Include="Lock.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="prime_number_calculator.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="threads.h" />
+    <ClInclude Include="filesystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

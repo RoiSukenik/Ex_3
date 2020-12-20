@@ -11,7 +11,7 @@
 typedef struct _q_node
 {
 	int data;
-	struct q_node* next;
+	struct _q_node* next;
 }q_node;
 
 
