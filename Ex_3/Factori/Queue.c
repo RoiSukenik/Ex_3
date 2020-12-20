@@ -44,7 +44,6 @@ int Push(Queue* que, int value)
 void Pop(Queue* que)
 {
     q_node* tmp_node;
-    int value = que->first->data;
     tmp_node = que->first;
     que->first = que->first->next;
     que->count--;

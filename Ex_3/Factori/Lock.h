@@ -3,6 +3,7 @@
 #define STATUS_CODE_FAILURE 1
 #define STATUS_CODE_SUCCESS 0
 #include "includes.h"
+#define WAIT_FIVE_SECOND 5000
 
 #define WAIT_TWO_MINUTES 120000
 

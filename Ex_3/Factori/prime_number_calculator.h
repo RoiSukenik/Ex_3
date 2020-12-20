@@ -22,7 +22,7 @@ typedef struct _node {
 * Parameters - None
 * Returns - Pointer to a array struct
 */
-node* initialize_prime_num_list(int num);
+node* initialize_prime_num_list();
 
 /*
 * Description - realloc in prime num arr, add prime number, update pointer

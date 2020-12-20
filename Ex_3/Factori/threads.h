@@ -54,10 +54,7 @@ DWORD WINAPI Main_of_Sub_Thread(LPVOID lpParam);
 * Parameters - task file handle, output file handle, task start index, tast end index
 * Returns -STATUS CODE FAILURE | STATUS CODE SUCCESS
 */
-int preform_task(HANDLE task_file_handle,
-	HANDLE output_file_handle,
-	int task_start_index,
-	int task_end_index);
+int preform_task(char* file_path,Queue* que,Lock* lock);
 /*
 * Description - Creates and initialize a thread parameter array
 * Parameters - task file path, queue pointer, amount of threads
@@ -77,6 +74,22 @@ DWORD* create_thread_id_array(thread_parameters* tp, int amount_of_threads);
 * Returns -pointer to array of thread handles
 */
 void create_initilize_thandle_array(char* task_file_path, Queue* queue, int amount_of_threads, int amount_of_tasks);
+
+
+/*
+* Description - does the critial locking read code
+* Parameters - string to read into, amount of bytes to read, path to the file, index from which to start reading)
+* Returns - int with fail/success status
+*/
+int critical_read_code(char* tasked_string, int task_size, char* file_path, int task_start_index);
+
+
+/*
+* Description - does the critial locking write code
+* Parameters - string to write, amount of bytes to write(buffer), path to the file, index from which to start reading)
+* Returns - int with fail/success status
+*/
+int critical_write_code(char* token, int task_size, char* file_path, int task_start_index);
 
 
 

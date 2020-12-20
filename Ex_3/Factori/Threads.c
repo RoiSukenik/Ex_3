@@ -1,58 +1,28 @@
 #include "threads.h"
 
-
-
-int preform_task(HANDLE file_handle_read, HANDLE file_handle_write,
-	Queue* que,
-	Lock* lock
-)
+int critical_read_code(char* tasked_string, int task_size,char* file_path,int task_start_index)
 {
-	int task_start_index=0;
-	int task_size = MAX_NUMBER_LENGTH * sizeof(int);
 
-	DWORD wait_code;					
-	wait_code = WaitForSingleObject(
-		Mutex_que,		// handle to mutex
-		WAIT_TWO_MINUTES);  // time-out interval
-	if (wait_code != WAIT_OBJECT_0) {
-		return STATUS_CODE_FAILURE;
-	}
-	//mutexed area start:
-	if (!Empty(que))
-	{	
-		task_start_index = Top(que);
-		Pop(que);
-	}
-	//mutexed area end.
-	if (!ReleaseMutex(Mutex_que))
-	{
-		printf("Release Mutex error: %d\n", GetLastError());
+	HANDLE file_handle_read = NULL;
+	file_handle_read = CreateFileA(file_path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (file_handle_read == INVALID_HANDLE_VALUE) {
+		printf("Read request failed, Last Error = %s\n ", GetLastError());
 		return STATUS_CODE_FAILURE;
 	}
 
-	int setfile_returned_value;
-	DWORD write_bytes;						// for the sake of definition
-	char* tasked_string = NULL;
-
-	setfile_returned_value = SetFilePointer(
+	int setfile_returned_value = SetFilePointer(
 		file_handle_read,
 		task_start_index,
 		NULL,
 		FILE_BEGIN);
 	if (setfile_returned_value == INVALID_SET_FILE_POINTER) {
 		printf("SetFilePointer failed in hte request, printing last ERROR = %d\n", GetLastError());
+		CloseHandle(file_handle_read);
 		return STATUS_CODE_FAILURE;
 	}
 	DWORD      nNumberOfBytesToRead = task_size;
 	DWORD      lpNumberOfBytesRead;
 
-	tasked_string = (char*)malloc((task_size + 1) * sizeof(char));
-	if (tasked_string == NULL) {
-		printf("Memory Allocation Failed, this came from a sub thread !\n");
-		return STATUS_CODE_FAILURE;
-	}
-	//locking for read !
-	if (read_lock(lock) == STATUS_CODE_FAILURE) { free(tasked_string); return STATUS_CODE_FAILURE; }
 	setfile_returned_value = ReadFile(file_handle_read,
 		tasked_string,
 		nNumberOfBytesToRead,
@@ -61,27 +31,26 @@ int preform_task(HANDLE file_handle_read, HANDLE file_handle_write,
 	if (setfile_returned_value == 0) {
 		printf("ReadFile Failed on request, last error reveived : %d \n", GetLastError());
 		free(tasked_string);
+		CloseHandle(file_handle_read);
 		return STATUS_CODE_FAILURE;
 	}
-	// releasing reader !
-	if (read_release(lock) == STATUS_CODE_FAILURE) { free(tasked_string); return STATUS_CODE_FAILURE; }
-	
-	char* ptr;
-	char* nexttoken;
-	char* delim = "\r\n";
-	char* token = strtok_s(tasked_string, delim, &nexttoken);
+	errno_t ret_val = CloseHandle(file_handle_read);
+	if (ret_val == 0) printf("oh no");
+}
 
-	int num;
-	num = (int)strtol(token, &ptr, 10);
-	token = NULL;
-	node* primes = divid_number_add_2_list(num);
-	free(tasked_string);
-	token = print_prime_list(primes);
-	free_list(primes);
+
+int critical_write_code(char* token,int task_size, char* file_path, int task_start_index)
+{
+	DWORD write_bytes;						// for the sake of definition
+	HANDLE file_handle_write = NULL;
+	file_handle_write = CreateFileA(file_path, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	
-	
-	if (write_lock(lock) == STATUS_CODE_FAILURE) { free(token); return STATUS_CODE_FAILURE; }
-	setfile_returned_value = SetFilePointer(
+	if (file_handle_write == INVALID_HANDLE_VALUE) {
+		printf_s("Write request failed, Last Error = %s\n ", GetLastError());
+		free(token);
+		return STATUS_CODE_FAILURE;
+	}
+	int setfile_returned_value = SetFilePointer(
 		file_handle_write,
 		task_start_index,
 		NULL,
@@ -89,9 +58,10 @@ int preform_task(HANDLE file_handle_read, HANDLE file_handle_write,
 	if (setfile_returned_value == INVALID_SET_FILE_POINTER) {
 		printf("SetFilePointer failed in hte request, printing last ERROR = %d\n", GetLastError());
 		free(token);
+		CloseHandle(file_handle_write);
 		return STATUS_CODE_FAILURE;
 	}
-	
+
 	setfile_returned_value = WriteFile(file_handle_write,
 		token,
 		task_size,
@@ -100,13 +70,91 @@ int preform_task(HANDLE file_handle_read, HANDLE file_handle_write,
 	if (setfile_returned_value == 0) {
 		printf("Write File Falied");
 		free(token);
+		CloseHandle(file_handle_write);
 		return STATUS_CODE_FAILURE;
 	}
-	if(write_release(lock) == STATUS_CODE_FAILURE) { free(token); return STATUS_CODE_FAILURE; }
+	CloseHandle(file_handle_write);
+}
 
 
+
+int preform_task(char* file_path,Queue* que,Lock* lock)
+{
+	int task_start_index=0;
+	int task_size = MAX_NUMBER_LENGTH * sizeof(int);
+	HANDLE file_handle_read = NULL;
+	HANDLE file_handle_write = NULL;
+	bool QnotEmpty = TRUE;
+	while (QnotEmpty)
+	{
+		// mutex --
+		DWORD wait_code;
+		wait_code = WaitForSingleObject(
+			Mutex_que,		// handle to mutex
+			WAIT_TWO_MINUTES);  // time-out interval
+		if (wait_code != WAIT_OBJECT_0) {
+			return STATUS_CODE_FAILURE;
+		}
+		//mutexed area start:
+		if (!Empty(que))
+		{
+			task_start_index = Top(que);
+			Pop(que);
+		}
+		else {
+			QnotEmpty = FALSE;
+			return STATUS_CODE_SUCCESS;
+		}
+		//mutexed area end.
+		if (!ReleaseMutex(Mutex_que))
+		{
+			printf("Release Mutex error: %d\n", GetLastError());
+			return STATUS_CODE_FAILURE;
+		} // mutex++
+
+		char* tasked_string = NULL;
+		tasked_string = (char*)malloc((task_size + 1) * sizeof(char));
+		if (tasked_string == NULL) {
+			printf("Memory Allocation Failed, this came from a sub thread !\n");
+			return STATUS_CODE_FAILURE;
+		}
+
+		printf("before crit read lock");//fixme
+		//locking for read !
+		if (read_lock(lock) == STATUS_CODE_FAILURE) { free(tasked_string); return STATUS_CODE_FAILURE; }
+		int ret_val = 0;
+		printf("after crit read lock");//fixme
+		ret_val = critical_read_code(tasked_string, task_size, file_path, task_start_index);
+		printf("after crit read code");//fixme
+		if (ret_val == STATUS_CODE_FAILURE) { return STATUS_CODE_FAILURE; }
+		// releasing reader !
+		if (read_release(lock) == STATUS_CODE_FAILURE) { free(tasked_string); return STATUS_CODE_FAILURE; }
+		printf("after crit read release");//fixme
+		char* ptr;
+		char* nexttoken = NULL;
+		char* delim = "\r\n";
+		char* token = strtok_s(tasked_string, delim, &nexttoken);
+
+		int num;
+		num = (int)strtol(token, &ptr, 10);
+		token = NULL;
+		node* primes = divid_number_add_2_list(num);
+		free(tasked_string);
+		token = print_prime_list(primes);
+		//free_list(primes);
+
+		// locking for write
+		if (write_lock(lock) == STATUS_CODE_FAILURE) { free(token); return STATUS_CODE_FAILURE; }
+		ret_val = critical_write_code(token, task_size, file_path, task_start_index);
+		if (ret_val == STATUS_CODE_FAILURE) { return STATUS_CODE_FAILURE; }
+		// releasing for write
+		if (write_release(lock) == STATUS_CODE_FAILURE) { free(token); return STATUS_CODE_FAILURE; }
+	}
 	return STATUS_CODE_SUCCESS;
 }
+
+
+
 static HANDLE CreateThreadSimple
 (
 	LPTHREAD_START_ROUTINE p_start_routine,
@@ -141,35 +189,13 @@ static HANDLE CreateThreadSimple
 DWORD WINAPI Main_of_Sub_Thread(LPVOID lpParam)
 {
 	thread_parameters* parameters_of_the_thread = (thread_parameters*)lpParam;
-	HANDLE file_handle_read = NULL;
-	HANDLE file_handle_write = NULL;
 	int return_value;
 
-	printf("Thread reached\n");//Delete me
-
-	file_handle_read = CreateFileA(parameters_of_the_thread->file_path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (file_handle_read == INVALID_HANDLE_VALUE) {
-		printf("Read request failed, Last Error = %s\n ", GetLastError);
-		return STATUS_CODE_FAILURE;
-	}
-
-
-	file_handle_write = CreateFileA(parameters_of_the_thread->file_path,GENERIC_WRITE,FILE_SHARE_WRITE,	NULL, OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
-	if (file_handle_write == INVALID_HANDLE_VALUE) {
-		printf_s("Write request failed, Last Error = %s\n ", GetLastError);
-		// close all opened handles:
-		CloseHandle(file_handle_read);
-		return STATUS_CODE_FAILURE;
-	}
-
 	return_value = preform_task(
-		file_handle_read,
-		file_handle_write,
+		parameters_of_the_thread->file_path,
 		parameters_of_the_thread->que,
 		parameters_of_the_thread->lock);
 
-	CloseHandle(file_handle_read);
-	CloseHandle(file_handle_write);
 	if (return_value == STATUS_CODE_FAILURE) {
 		printf("failed inside the thread logic");
 		return STATUS_CODE_FAILURE;
@@ -182,7 +208,7 @@ thread_parameters* create_initilize_tp_array(char* task_file_path, Queue* que, i
 {
 
 	Lock* lock = InitializeLock(); 
-	if (lock = NULL) {
+	if (lock == NULL) {
 		printf("The pointer was not allocated correctly");
 		DestroyQueue(que);
 		exit(STATUS_CODE_FAILURE);

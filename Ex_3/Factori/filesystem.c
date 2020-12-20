@@ -8,8 +8,9 @@ void clean_output_file(char* output_file)
 	FILE* p_stream;
 	// Open file in write mode, this mode overwrites/creates this empty file
 	retval = fopen_s(&p_stream, output_file, "w");
-	if (0 != retval) 
-	{ printf("Failed to open file.\n");	exit(retval); }
+	if (0 != retval && p_stream != NULL) 
+	{ printf("Failed to open file.\n");	fclose(p_stream); exit(STATUS_CODE_FAILURE);
+	}
 	retval = fclose(p_stream);
 	if (0 != retval)
 	{ printf("Failed to close file.\n");	exit(retval); }
@@ -35,6 +36,7 @@ int amount_of_lines(FILE* p_fs) {
 Queue* extract_priorty_array(char* input_path_priorty, int amount_of_tasks)
 {
 	Queue* queue = InitializeQueue();
+	if (queue == NULL) {printf("failed to initiallize queue");}
 	errno_t retval;
 	FILE* p_stream;
 
@@ -44,7 +46,7 @@ Queue* extract_priorty_array(char* input_path_priorty, int amount_of_tasks)
 	char* ptr ;
 	retval = fopen_s(&p_stream, input_path_priorty, "r");
 	char* delim = "\n";
-	if (0 != retval) { printf("Failed to open file.\n");	exit(STATUS_CODE_FAILURE); }
+	if (0 != retval && p_stream == 0) { printf("Failed to open file.\n"); fclose(p_stream); exit(STATUS_CODE_FAILURE); }
 	for (int i = 0; i < amount_of_tasks; i++)
 	{
 		
@@ -54,7 +56,10 @@ Queue* extract_priorty_array(char* input_path_priorty, int amount_of_tasks)
 		
 		int num;
 		num = strtol(p_line, &ptr, 10);
-		Push(queue, num);
+		if (Push(queue, num) == STATUS_CODE_FAILURE) { 
+			printf("failed to push into queue");
+			DestroyQueue(queue);
+		}
 		
 		
 	}

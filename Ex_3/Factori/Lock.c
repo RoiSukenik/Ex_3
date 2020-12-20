@@ -76,7 +76,7 @@ int read_lock(Lock* lock) {
 
     wait_code = WaitForSingleObject(
         lock->Mutex,        // handle to mutex
-        WAIT_TWO_MINUTES);  // time-out interval
+        WAIT_FIVE_SECOND);  // time-out interval
     if (wait_code != WAIT_OBJECT_0) {
         return STATUS_CODE_FAILURE;
     }
@@ -85,7 +85,7 @@ int read_lock(Lock* lock) {
         // wait on semaphore (wait for writer to finish)
         wait_code = WaitForSingleObject(
             lock->semaphore_roomEmpty,  // handle to semaphore
-            WAIT_TWO_MINUTES);          // wait two minutes at most, as instructed
+            WAIT_FIVE_SECOND);          // wait two minutes at most, as instructed
         if (wait_code != WAIT_OBJECT_0) {
             return STATUS_CODE_FAILURE;
         }
@@ -104,7 +104,7 @@ int read_release(Lock* lock) {
     DWORD wait_code;
     wait_code = WaitForSingleObject(
         lock->Mutex,        // handle to mutex
-        WAIT_TWO_MINUTES);  // time-out interval
+        WAIT_FIVE_SECOND);  // time-out interval
     if (wait_code != WAIT_OBJECT_0) {
         return STATUS_CODE_FAILURE;
     }
@@ -145,7 +145,7 @@ int write_lock(Lock* lock) {
 
     wait_code = WaitForSingleObject(
         lock->semaphore_roomEmpty,  // handle to semaphore
-        WAIT_TWO_MINUTES);          // wait two minutes at most, as instructed
+        WAIT_FIVE_SECOND);          // wait two minutes at most, as instructed
     if (wait_code != WAIT_OBJECT_0) {
         return STATUS_CODE_FAILURE;
     }
