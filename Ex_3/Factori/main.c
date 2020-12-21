@@ -13,8 +13,6 @@
 
 int main(int argc, char* argv[])
 {
-
-	clean_output_file("output.txt");
 	char* ptr;
 	int amount_of_tasks = strtol(argv[3], &ptr, 10);
 	Queue* que = extract_priorty_array(argv[2],amount_of_tasks);
