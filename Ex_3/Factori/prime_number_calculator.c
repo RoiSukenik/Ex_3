@@ -130,6 +130,4 @@ void free_list(node* p_prime_list)
 		
 
 	}
-
-	printf_s("All Memory Allocations Freed!\n\n");
 }

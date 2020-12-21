@@ -51,7 +51,7 @@ int critical_write_code(char* token,int task_size, char* file_path, int task_sta
 	}
 	int setfile_returned_value = SetFilePointer(
 		file_handle_write,
-		task_start_index,
+		0,
 		NULL,
 		FILE_END);
 	if (setfile_returned_value == INVALID_SET_FILE_POINTER) {
