@@ -2,7 +2,6 @@
 
 int critical_read_code(char* tasked_string, int task_size,char* file_path,int task_start_index)
 {
-
 	HANDLE file_handle_read = NULL;
 	file_handle_read = CreateFileA(file_path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (file_handle_read == INVALID_HANDLE_VALUE) {
@@ -82,8 +81,6 @@ int preform_task(char* file_path,Queue* que,Lock* lock)
 {
 	int task_start_index=0;
 	int task_size = MAX_NUMBER_LENGTH * sizeof(int);
-	HANDLE file_handle_read = NULL;
-	HANDLE file_handle_write = NULL;
 	bool QnotEmpty = TRUE;
 	while (QnotEmpty)
 	{
@@ -119,30 +116,26 @@ int preform_task(char* file_path,Queue* que,Lock* lock)
 			return STATUS_CODE_FAILURE;
 		}
 
-		printf("before crit read lock");//fixme
 		//locking for read !
 		if (read_lock(lock) == STATUS_CODE_FAILURE) { free(tasked_string); return STATUS_CODE_FAILURE; }
 		int ret_val = 0;
-		printf("after crit read lock");//fixme
 		ret_val = critical_read_code(tasked_string, task_size, file_path, task_start_index);
-		printf("after crit read code");//fixme
 		if (ret_val == STATUS_CODE_FAILURE) { return STATUS_CODE_FAILURE; }
 		// releasing reader !
 		if (read_release(lock) == STATUS_CODE_FAILURE) { free(tasked_string); return STATUS_CODE_FAILURE; }
-		printf("after crit read release");//fixme
+
 		char* ptr;
 		char* nexttoken = NULL;
 		char* delim = "\r\n";
 		char* token = strtok_s(tasked_string, delim, &nexttoken);
-
 		int num;
-		num = (int)strtol(token, &ptr, 10);
+		num = strtol(token, &ptr, 10);
+		free(tasked_string);
 		token = NULL;
 		node* primes = divid_number_add_2_list(num);
-		free(tasked_string);
+		if (primes == NULL) { printf("primes failed\n"); return STATUS_CODE_FAILURE; }
 		token = print_prime_list(primes);
-		//free_list(primes);
-
+		task_size = strlen(token);
 		// locking for write
 		if (write_lock(lock) == STATUS_CODE_FAILURE) { free(token); return STATUS_CODE_FAILURE; }
 		ret_val = critical_write_code(token, task_size, file_path, task_start_index);

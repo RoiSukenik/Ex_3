@@ -7,7 +7,7 @@ node* initialize_prime_num_list()
 	if (NULL == p_prime_num_list)
 	{
 		printf_s("Failed to allocate memory\n\n");
-		exit(STATUS_CODE_FAILURE);
+		return NULL;
 	}
 	p_prime_num_list->next = NULL;
 	return p_prime_num_list;
@@ -22,7 +22,7 @@ node* add_prime(node* p_prime_num_list , int num)
 		new_node = (node*)malloc(sizeof(node));
 		if (NULL == new_node) {
 			printf_s("Failed to allocate memory\n\n");
-			exit(STATUS_CODE_FAILURE);
+			return NULL;
 		}
 		new_node->data = value;
 		new_node->original_num = p_prime_num_list->original_num;
@@ -35,37 +35,33 @@ node* add_prime(node* p_prime_num_list , int num)
 node* divid_number_add_2_list(int num)
 {
 	node* p_prime_list = initialize_prime_num_list(num);
+	if (p_prime_list == NULL) { return NULL; }
 	p_prime_list->original_num = num;
+
 	if (num % 2 == 0)
 	{
 		p_prime_list->data = 2;
-	}
-	else
-	{
-		for (int i = 3; i <= sqrt(num); i = i + 2)
-		{
-			if (num % i == 0)
-			{
-				p_prime_list->data = i;
-				num = num / i;
-				break;
-			}
-		}
+	
+		
 	}
 	while (num % 2 == 0)
 	{
-		p_prime_list = add_prime(p_prime_list ,2);
+		p_prime_list = add_prime(p_prime_list, 2);
+		if (p_prime_list == NULL) { return NULL; }
 		num = num / 2;
+
 	}
 	for (int i = 3; i <= sqrt(num); i = i + 2)
 	{
 		while (num % i == 0)
 		{
 			p_prime_list = add_prime(p_prime_list , i);
+			if (p_prime_list == NULL) { return NULL; }
 			num = num / i;
 		}
 	}
-	if (num > 2) p_prime_list = add_prime(p_prime_list , num);
+	if (num > 2 ) {p_prime_list = add_prime(p_prime_list, num); }
+	if (p_prime_list == NULL) { return NULL; }
 
 	return p_prime_list;
 }
@@ -74,7 +70,7 @@ void sort_list(node* list)
 {
 	node* temp = list;
 
-	while (temp)
+	while (temp != NULL)
 	{
 		node* min = temp;
 		node* r = temp->next;
@@ -94,40 +90,30 @@ void sort_list(node* list)
 
 char* print_prime_list(node* p_prime_list) {
 	sort_list(p_prime_list);
-	char* p_output_string=NULL;
-	p_output_string = (char*)malloc(sizeof(char));
-	if (NULL == p_output_string) {
+
+
+	size_t needed = snprintf(NULL, 0, "The Prime Factor of %d are: ",p_prime_list->original_num) + 1;
+	char* buffer = malloc(needed);
+	if (NULL == buffer) {
 		printf_s("Failed to allocate memory\n\n");
 		exit(STATUS_CODE_FAILURE);
 	}
-	if (sprintf_s(p_output_string, sizeof(int)+STRING_OUTPUT_BUFFER, "The Prime Factor of %d are: ", p_prime_list->original_num) == STATUS_CODE_FAILURE)
-	{
-			printf_s("Failed to Write Formatted Data to String \n\n");
-			exit(STATUS_CODE_FAILURE);
-	}
+	sprintf_s(buffer,needed, "The Prime Factor of %d are: ", p_prime_list->original_num);
 	node* temp = p_prime_list;
-	while (temp->next != NULL)
+	while (temp->next != NULL )
 	{
-		int size_p_string = strlen(p_output_string);//FIXME change the 10
-		if (sprintf_s(p_output_string, size_p_string+size_of_buffer+sizeof(int), "%s%d, ",p_output_string, p_prime_list->data) == STATUS_CODE_FAILURE)
-		{
-			printf_s("Failed to Write Formatted Data to String \n\n");
-			exit(STATUS_CODE_FAILURE);
-		}
-		
+
+		needed = snprintf(NULL, 0, "%s%d, ", buffer, p_prime_list->data)+1;
+		buffer = realloc(buffer, needed);
+		sprintf_s(buffer, needed, "%s%d, ", buffer, p_prime_list->data);
+	
 		temp = temp->next;
 	}
-	int size_p_string = strlen(p_output_string);
-	
-	if (sprintf_s(p_output_string, size_p_string + size_of_buffer + sizeof(int),
-		"%s%d\r\n", p_output_string, temp->data) == STATUS_CODE_FAILURE)
-	{
-		printf_s("Failed to Write Formatted Data to String \n\n");
-		exit(STATUS_CODE_FAILURE);
-	}
-	//free_list(p_prime_list);
-	return p_output_string;
-
+	needed = snprintf(NULL, 0, "%s%d\r\n", buffer, temp->data) + 1;
+	buffer = realloc(buffer, needed);
+	sprintf_s(buffer, needed, "%s%d\r\n", buffer, temp->data);
+	free_list(p_prime_list);
+	return buffer;
 }
 
 void free_list(node* p_prime_list)

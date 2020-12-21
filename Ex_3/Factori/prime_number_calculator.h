@@ -29,7 +29,7 @@ node* initialize_prime_num_list();
 * Parameters -  int to add
 * Returns - Pointer to the updated number list
 */
-node* add_prime(node* prime_num_arr , int num);
+node* add_prime(node* p_prime_num_list, int num, int org);
 
 /*
 * Description - Fill prime number list with the prime numbers
