@@ -18,7 +18,7 @@
 #define MAX_NUMBER_LENGTH 44
 #define OUTPUT_FILE_NAME "output.txt"
 
-static HANDLE Mutex_que;
+volatile HANDLE Mutex_que;
 
 
 

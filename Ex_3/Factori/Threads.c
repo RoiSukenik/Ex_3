@@ -90,7 +90,7 @@ int preform_task(char* file_path,Queue* que,Lock* lock)
 			Mutex_que,		// handle to mutex
 			WAIT_FIVE_SECOND);  // time-out interval
 		if (wait_code != WAIT_OBJECT_0) {
-			return STATUS_CODE_FAILURE;
+			return STATUS_CODE_SUCCESS;
 		}
 		//mutexed area start:
 		if (!Empty(que))
@@ -103,8 +103,9 @@ int preform_task(char* file_path,Queue* que,Lock* lock)
 			return STATUS_CODE_SUCCESS;
 		}
 		//mutexed area end.
-		if (!ReleaseMutex(Mutex_que))
-		{
+		int ret_val;
+		ret_val = ReleaseMutex(Mutex_que);
+		if (ret_val == 0) {
 			printf("Release Mutex error: %d\n", GetLastError());
 			return STATUS_CODE_FAILURE;
 		} // mutex++
@@ -118,7 +119,7 @@ int preform_task(char* file_path,Queue* que,Lock* lock)
 
 		//locking for read !
 		if (read_lock(lock) == STATUS_CODE_FAILURE) { free(tasked_string); return STATUS_CODE_FAILURE; }
-		int ret_val = 0;
+		ret_val = 0;
 		ret_val = critical_read_code(tasked_string, task_size, file_path, task_start_index);
 		if (ret_val == STATUS_CODE_FAILURE) { return STATUS_CODE_FAILURE; }
 		// releasing reader !
