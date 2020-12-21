@@ -10,6 +10,7 @@ node* initialize_prime_num_list()
 		return NULL;
 	}
 	p_prime_num_list->next = NULL;
+	p_prime_num_list->first = true;
 	return p_prime_num_list;
 }
 
@@ -17,6 +18,12 @@ node* add_prime(node* p_prime_num_list , int num)
 {
 	int value = num;
 	node* new_node = NULL;
+	if (p_prime_num_list->first == true && num>0)
+	{
+		p_prime_num_list->data = value;
+		p_prime_num_list->first = false;
+		return p_prime_num_list;
+	}
 	if (num > 0)
 	{
 		new_node = (node*)malloc(sizeof(node));
@@ -24,6 +31,7 @@ node* add_prime(node* p_prime_num_list , int num)
 			printf_s("Failed to allocate memory\n\n");
 			return NULL;
 		}
+		new_node->first = false;
 		new_node->data = value;
 		new_node->original_num = p_prime_num_list->original_num;
 		new_node->next = p_prime_num_list;
@@ -38,12 +46,6 @@ node* divid_number_add_2_list(int num)
 	if (p_prime_list == NULL) { return NULL; }
 	p_prime_list->original_num = num;
 
-	if (num % 2 == 0)
-	{
-		p_prime_list->data = 2;
-	
-		
-	}
 	while (num % 2 == 0)
 	{
 		p_prime_list = add_prime(p_prime_list, 2);

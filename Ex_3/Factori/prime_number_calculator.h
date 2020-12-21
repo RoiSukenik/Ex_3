@@ -12,6 +12,7 @@
 #define size_of_buffer  10
 
 typedef struct _node {
+	bool first;
 	int original_num;
 	int data;
 	struct _node* next;
