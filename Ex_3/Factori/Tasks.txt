@@ -2,3 +2,15 @@
 13
 1337
 
+The Prime Factor of 25 are: 5, 5
+The Prime Factor of 1337 are: 7, 191
+The Prime Factor of 13 are: 13
+The Prime Factor of 1337 are: 7, 191
+The Prime Factor of 25 are: 5, 5
+The Prime Factor of 13 are: 13
+The Prime Factor of 1337 are: 7, 191
+The Prime Factor of 25 are: 5, 5
+The Prime Factor of 13 are: 13
+The Prime Factor of 1337 are: 7, 191
+The Prime Factor of 25 are: 5, 5
+The Prime Factor of 13 are: 13

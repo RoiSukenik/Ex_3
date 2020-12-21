@@ -88,7 +88,7 @@ int preform_task(char* file_path,Queue* que,Lock* lock)
 		DWORD wait_code;
 		wait_code = WaitForSingleObject(
 			Mutex_que,		// handle to mutex
-			WAIT_TWO_MINUTES);  // time-out interval
+			WAIT_FIVE_SECOND);  // time-out interval
 		if (wait_code != WAIT_OBJECT_0) {
 			return STATUS_CODE_FAILURE;
 		}
@@ -246,7 +246,7 @@ void create_initilize_thandle_array(char* task_file_path,Queue* queue,int amount
 	thread_parameters* tp = create_initilize_tp_array(task_file_path, queue, amount_of_tasks);
 	DWORD* thread_id_array = create_thread_id_array(tp, amount_of_tasks);
 
-
+	Mutex_que = NULL;
 	Mutex_que = CreateMutex(
 		NULL,              // default security attributes
 		FALSE,             // initially not owned

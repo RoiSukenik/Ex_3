@@ -35,18 +35,18 @@ Lock* InitializeLock(void)
         return NULL;
     }
 
-    //// mutex creation:
-    //lock->turnstile = CreateMutex(
-    //    NULL,              // default security attributes
-    //    FALSE,             // initially not owned
-    //    NULL);             // unnamed mutex
+    // mutex creation:
+    lock->turnstile = CreateMutex(
+        NULL,              // default security attributes
+        FALSE,             // initially not owned
+        NULL);             // unnamed mutex
 
-    //if (lock->turnstile == NULL)
-    //{
-    //    printf("CreateMutex error: %d\n", GetLastError());
-    //    return STATUS_CODE_FAILURE;
-    //}
-    // //turnstile
+    if (lock->turnstile == NULL)
+    {
+        printf("CreateMutex error: %d\n", GetLastError());
+        return STATUS_CODE_FAILURE;
+    }
+     //turnstile
 
     return lock;
 }
@@ -56,20 +56,20 @@ Lock* InitializeLock(void)
 int read_lock(Lock* lock) {
     DWORD wait_code;
 
-    ////turnstile:
+    //turnstile:
 
-    //wait_code = WaitForSingleObject(
-    //    lock->turnstile,    // handle to mutex
-    //    WAIT_TWO_MINUTES);  // no time-out interval
-    //if (wait_code != WAIT_OBJECT_0) {
-    //    return STATUS_CODE_FAILURE;
-    //}
-    //if (!ReleaseMutex(lock->turnstile))
-    //{
-    //    printf("Release Mutex error: %d\n", GetLastError());
-    //    return STATUS_CODE_FAILURE;
-    //}
-    // //turnstile
+    wait_code = WaitForSingleObject(
+        lock->turnstile,    // handle to mutex
+        WAIT_FIVE_SECOND);  // no time-out interval
+    if (wait_code != WAIT_OBJECT_0) {
+        return STATUS_CODE_FAILURE;
+    }
+    if (!ReleaseMutex(lock->turnstile))
+    {
+        printf("Release Mutex error: %d\n", GetLastError());
+        return STATUS_CODE_FAILURE;
+    }
+     //turnstile
 
 
 
@@ -133,15 +133,15 @@ int read_release(Lock* lock) {
 int write_lock(Lock* lock) {
     DWORD wait_code;
 
-    ////turnstile:
+    //turnstile:
 
-    //wait_code = WaitForSingleObject(
-    //    lock->turnstile,    // handle to mutex
-    //    WAIT_TWO_MINUTES);  // no time-out interval
-    //if (wait_code != WAIT_OBJECT_0) {
-    //    return STATUS_CODE_FAILURE;
-    //}
-    // //turnstile
+    wait_code = WaitForSingleObject(
+        lock->turnstile,    // handle to mutex
+        WAIT_FIVE_SECOND);  // no time-out interval
+    if (wait_code != WAIT_OBJECT_0) {
+        return STATUS_CODE_FAILURE;
+    }
+     //turnstile
 
     wait_code = WaitForSingleObject(
         lock->semaphore_roomEmpty,  // handle to semaphore
@@ -152,12 +152,12 @@ int write_lock(Lock* lock) {
 }
 
 int write_release(Lock* lock) {
-    //if (!ReleaseMutex(lock->turnstile))
-    //{
-    //    printf("Release Mutex error: %d\n", GetLastError());
-    //    return STATUS_CODE_FAILURE;
-    //}
-    // //turnstile
+    if (!ReleaseMutex(lock->turnstile))
+    {
+        printf("Release Mutex error: %d\n", GetLastError());
+        return STATUS_CODE_FAILURE;
+    }
+     //turnstile
     if (!ReleaseSemaphore(
         lock->semaphore_roomEmpty,  // handle to semaphore
         1,                          // increase count by one

@@ -7,7 +7,7 @@
 
 #define WAIT_TWO_MINUTES 120000
 
-static const int semaphore_starting_value = 0;
+static const int semaphore_starting_value = 1;
 static const int semaphore_max_value = 1;
 
 
@@ -15,7 +15,7 @@ typedef struct _Lock {
 	int readers;
 	HANDLE semaphore_roomEmpty;
 	HANDLE Mutex;
-/// HANDLE turnstile;
+	HANDLE turnstile;
 }Lock;
 
 /*
